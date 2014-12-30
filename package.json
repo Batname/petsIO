@@ -1,0 +1,36 @@
+{
+  "name": "petsIO",
+  "version": "0.1.0",
+  "author": "Denis Dubinin",
+  "description": "petsIO App",
+  "private": true,
+  "scripts": {
+    "start": "node ./app/start.js"
+  },
+  "dependencies": {
+    "body-parser": "1.9.x",
+    "express": "4.10.x",
+    "faker": "2.0.x",
+    "method-override": "2.3.x",
+    "mongoose": "3.8.x",
+    "nconf": "0.6.x",
+    "oauth2orize": "1.0.x",
+    "passport": "0.2.x",
+    "passport-http": "0.2.x",
+    "passport-http-bearer": "1.0.x",
+    "passport-oauth2-client-password": "0.1.x",
+    "serve-favicon": "2.1.x",
+    "winston": "0.8.x"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^0.12.0",
+    "grunt-contrib-compass": "^1.0.1",
+    "grunt-contrib-jade": "^0.13.0",
+    "grunt-contrib-sass": "^0.8.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-express-server": "^0.4.19",
+    "grunt-contrib-livereload": "*"
+  },
+  "license": "MIT"
+}
