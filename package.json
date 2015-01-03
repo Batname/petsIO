@@ -5,7 +5,8 @@
   "description": "petsIO App",
   "private": true,
   "scripts": {
-    "start": "node ./app/start.js"
+    "start": "node ./app/start.js",
+    "test": "karma start public/test/karma.conf.js"
   },
   "dependencies": {
     "body-parser": "1.9.x",
@@ -20,7 +21,11 @@
     "passport-http-bearer": "1.0.x",
     "passport-oauth2-client-password": "0.1.x",
     "serve-favicon": "2.1.x",
-    "winston": "0.8.x"
+    "winston": "0.8.x",
+    "karma": "^0.12.19",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-jasmine": "^0.1.5",
+    "karma-phantomjs-launcher": "^0.1.4"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
