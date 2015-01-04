@@ -7,7 +7,10 @@ angular.module("petsIO", [
 ]).config(($routeProvider, $locationProvider) ->
   $locationProvider.html5Mode true
   $routeProvider
-   .when("/login",
+  .when("/",
+    templateUrl: "views/home.html"
+    controller: 'MainCtrl'
+  ).when("/login",
     templateUrl: "views/login.html"
     controller: 'LoginCtrl'
   ).when("/signup",

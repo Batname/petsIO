@@ -1,7 +1,10 @@
 (function() {
   angular.module("petsIO", ["ngResource", "ngMessages", "ngRoute", "ngAnimate", "mgcrea.ngStrap"]).config(function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
-    return $routeProvider.when("/login", {
+    return $routeProvider.when("/", {
+      templateUrl: "views/home.html",
+      controller: 'MainCtrl'
+    }).when("/login", {
       templateUrl: "views/login.html",
       controller: 'LoginCtrl'
     }).when("/signup", {
@@ -51,6 +54,14 @@
 }).call(this);
 
 (function() {
+  angular.module("petsIO").controller("MainCtrl", function($scope, Offers) {
+    $scope.headingTitle = "Top 12 Offers";
+    return $scope.offers = Offers.query();
+  });
+
+}).call(this);
+
+(function() {
   angular.module("petsIO").controller("NavbarCtrl", function($scope, Auth) {
     return $scope.logout = function() {
       return Auth.logout();
@@ -64,6 +75,7 @@
     $scope.signup = function() {
       return Auth.signup({
         username: $scope.username,
+        nickname: $scope.nickname,
         password: $scope.password
       });
     };
@@ -85,7 +97,79 @@
 }).call(this);
 
 (function() {
+  angular.module("petsIO").directive("passwordStrength", function() {
+    return {
+      restrict: "A",
+      require: "ngModel",
+      link: function(scope, element, attrs, ngModel) {
+        var dots, indicator, strong, strongest, weak, weakest;
+        indicator = element.children();
+        dots = Array.prototype.slice.call(indicator.children());
+        weakest = dots.slice(-1)[0];
+        weak = dots.slice(-2);
+        strong = dots.slice(-3);
+        strongest = dots.slice(-4);
+        element.after(indicator);
+        return element.bind("keyup", function() {
+          angular.forEach(dots, function(el) {
+            return el.style.backgroundColor = "#ebeef1";
+          });
+          if (ngModel.$modelValue) {
+            if (ngModel.$modelValue.length > 8) {
+              return angular.forEach(strongest, function(el) {
+                return el.style.backgroundColor = "#008cdd";
+              });
+            } else if (ngModel.$modelValue.length > 5) {
+              return angular.forEach(strong, function(el) {
+                return el.style.backgroundColor = "#6ead09";
+              });
+            } else if (ngModel.$modelValue.length > 3) {
+              return angular.forEach(weak, function(el) {
+                return el.style.backgroundColor = "#e09115";
+              });
+            } else {
+              return weakest.style.backgroundColor = "#e01414";
+            }
+          }
+        });
+      },
+      template: "<span class=\"password-strength-indicator\"><span></span><span></span><span></span><span></span></span>"
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").directive("uniqueEmail", function($http) {
+    return {
+      restrict: "A",
+      require: "ngModel",
+      link: function(scope, element, attrs, ngModel) {
+        element.bind("blur", function() {
+          if (ngModel.$modelValue) {
+            return $http.get("/api/users", {
+              params: {
+                username: ngModel.$modelValue
+              }
+            }).success(function(data) {
+              return ngModel.$setValidity("unique", data.available);
+            });
+          }
+        });
+        return element.bind("keyup", function() {
+          return ngModel.$setValidity("unique", true);
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
   angular.module("petsIO").factory("Auth", function($http, $location, $rootScope, $alert, $window) {
+    var token;
+    token = $window.localStorage.token;
+    $rootScope.currentUser = token;
     return {
       login: function(user) {
         return $http({
@@ -97,26 +181,66 @@
           }
         }).success(function(data) {
           $window.localStorage.token = data.token_type + " " + data.access_token;
-          return $location.path("/");
+          $rootScope.currentUser = token;
+          $location.path("/");
+          return $alert({
+            title: "Cheers!",
+            content: "You have successfully logged in.",
+            animation: "fadeZoomFadeDown",
+            type: "material",
+            duration: 3
+          });
         }).error(function() {
           delete $window.localStorage.token;
-          return console.log("403");
+          return $alert({
+            title: 'Error!',
+            content: 'Invalid username or password.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
         });
       },
       signup: function(user) {
         return $http.post("/api/signup", user).success(function(data) {
-          console.log(data);
-          return $location.path("/login");
+          $location.path("/login");
+          return $alert({
+            title: 'Congratulations!',
+            content: 'Your account has been created.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
         }).error(function(response) {
+          $alert({
+            title: 'Error!',
+            content: response.data,
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
           return console.log(response.message);
         });
       },
       logout: function() {
         delete $window.localStorage.token;
         $rootScope.currentUser = null;
-        return $location.path("/");
+        $location.path("/");
+        return $alert({
+          content: 'You have been logged out.',
+          animation: 'fadeZoomFadeDown',
+          type: 'material',
+          duration: 3
+        });
       }
     };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").factory("Offers", function($resource) {
+    return $resource("/api/offers");
   });
 
 }).call(this);

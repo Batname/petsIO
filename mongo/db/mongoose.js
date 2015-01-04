@@ -28,6 +28,11 @@ var User = new Schema({
         unique: true,
         required: true
     },
+    nickname: {
+        type: String,
+        unique: true,
+        required: true
+    },
     hashedPassword: {
         type: String,
         required: true

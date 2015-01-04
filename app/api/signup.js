@@ -7,6 +7,7 @@ var UserModel  = require('../../mongo/db/mongoose').UserModel;
 signup.post('/signup', function(req, res, next) {
     var user = new UserModel({
         username: req.body.username,
+        nickname: req.body.nickname,
         password: req.body.password
     });
     user.save(function(err) {

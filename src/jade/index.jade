@@ -6,25 +6,38 @@ html(lang="en" ng-app="petsIO")
       title petsIO
       link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
       link(rel='stylesheet', href='/stylesheets/style.css')
+      link(href='favicon.png', rel='icon', type='image/png')
+      link(href='http://fonts.googleapis.com/css?family=Roboto|Montserrat:400,700|Open+Sans:400,300,700', rel='stylesheet', type='text/css')
+      link(href='//cdn.jsdelivr.net/ionicons/1.4.1/css/ionicons.min.css', rel='stylesheet')
       script(src="/bower_components/jquery/dist/jquery.js")
       script(src="/bower_components/angular/angular.js")
       script(src="/bower_components/angular-animate/angular-animate.js")
       script(src="/bower_components/angular-route/angular-route.js")
       script(src="/bower_components/angular-resource/angular-resource.js")
       script(src="/bower_components/angular-messages/angular-messages.js")
-      script(src="/bower_components/angular-strap/dist/angular-strap.min.js")
+      script(src="/bower_components/angular-strap/dist/angular-strap.js")
+      script(src="/bower_components/angular-strap/dist/angular-strap.tpl.js")
+      script(src="/lib/javascripts/moment.min.js")
       script(src="/javascripts/app.js")
    body
       .navbar.navbar-default.navbar-static-top(ng-controller='NavbarCtrl', role='navigation', bs-navbar='')
-         h1 petsIO!
-         a(href="/") home
-         br
-         a(href="/login") login
-         br
-         a(href="/signup") signup
-         br
-         a(href="/userinfo") userinfo
-         ul.nav.navbar-nav.pull-right()
+         .navbar-header
+            a.navbar-brand(href='/')
+               span
+                  | petsIO
+                  strong Trackr
+         ul.nav.navbar-nav
+            li(data-match-route='/$')
+               a(href='/') Home
+            li(data-match-route='/userinfo' ng-if='currentUser')
+               a(href='/userinfo') Userinfo
+         ul.nav.navbar-nav.pull-right(ng-if='!currentUser')
+            li(data-match-route='/login')
+               a(href='/login') Login
+            li(data-match-route='/signup')
+               a(href='/signup') Sign up
+         ul.nav.navbar-nav.pull-right(ng-if='currentUser')
+            li.navbar-text(ng-bind='currentUser.email')
             li
                a(href='javascript:void(0)', ng-click='logout()') Logout
-      div(ng-view)
+      div(class='{{pageClass}}' ng-view)

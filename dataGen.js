@@ -7,17 +7,17 @@ var RefreshTokenModel   = require('./mongo/db/mongoose').RefreshTokenModel;
 var faker               = require('faker');
 
 UserModel.remove({}, function(err) {
-    var user = new UserModel({ username: "bat", password: "21091091" });
+    var user = new UserModel({ username: "dadubinin@gmail.com", password: "21091091", nickname: "bat"  });
     user.save(function(err, user) {
         if(err) return log.error(err);
         else log.info("New user - %s:%s",user.username,user.password);
     });
 
     for(i=0; i<4; i++) {
-        var user = new UserModel({ username: faker.name.firstName().toLowerCase(), password: "21091091" });
+        var user = new UserModel({ username: faker.internet.email(), password: "21091091",nickname: faker.name.firstName().toLowerCase() });
         user.save(function(err, user) {
             if(err) return log.error(err);
-            else log.info("New user - %s:%s",user.username,user.password);
+            else log.info("New user - %s:%s",user.username,user.password,user.email);
         });
     }
 });
