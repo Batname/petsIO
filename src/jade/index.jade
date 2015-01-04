@@ -1,6 +1,7 @@
 doctype html
 html(lang="en" ng-app="petsIO")
    head
+      base(href="/")
       meta(charset="utf-8")
       title petsIO
       link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
@@ -10,7 +11,20 @@ html(lang="en" ng-app="petsIO")
       script(src="/bower_components/angular-animate/angular-animate.js")
       script(src="/bower_components/angular-route/angular-route.js")
       script(src="/bower_components/angular-resource/angular-resource.js")
+      script(src="/bower_components/angular-messages/angular-messages.js")
+      script(src="/bower_components/angular-strap/dist/angular-strap.min.js")
       script(src="/javascripts/app.js")
    body
-      section
+      .navbar.navbar-default.navbar-static-top(ng-controller='NavbarCtrl', role='navigation', bs-navbar='')
          h1 petsIO!
+         a(href="/") home
+         br
+         a(href="/login") login
+         br
+         a(href="/signup") signup
+         br
+         a(href="/userinfo") userinfo
+         ul.nav.navbar-nav.pull-right()
+            li
+               a(href='javascript:void(0)', ng-click='logout()') Logout
+      div(ng-view)

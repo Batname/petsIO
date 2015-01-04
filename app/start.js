@@ -1,23 +1,51 @@
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
-var methodOverride = require('method-override');
 var passport = require('passport');
 var bodyParser = require('body-parser');
 
+var config          = require('../mongo/db/config');
+var oauth2          = require('../mongo/db/oauth2');
 var log = require('./logs_lib/logs_lib')(module);
 
+var async = require('async');
+var request = require('request');
+var xml2js = require('xml2js');
+
+
 var app = express();
-app.use('/bower_components',  express.static(__dirname + '/bower_components'));
+app.use('/bower_components',  express.static(path.join(__dirname, "../bower_components")));
+//app.use(favicon('../public/favicon.ico'));
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.json());
+app.use(passport.initialize());
 app.use(express.static(path.join(__dirname, "../public")));
 
-var api = require('./api/api');
-app.use('/api', api);
+
+var offers = require('./api/offers');
+var login = require('./api/login');
+var signup = require('./api/signup');
+var userInfo = require('./api/userInfo');
+app.use('/api', offers);
+app.use('/api', login);
+app.use('/api', signup);
+app.use('/api', userInfo);
+
+
+require('../mongo/db/auth');
 
 app.listen(3000, function(){
     console.log('Express server listening on port 3000');
 });
 
+app.get('*', function(req, res) {
+    res.redirect('/#' + req.originalUrl);
+});
+
+app.use(function(err, req, res, next) {
+    console.error(err.stack);
+    res.send(500, { message: err.message });
+});
 
 app.use(function(req, res, next){
     res.status(404);
