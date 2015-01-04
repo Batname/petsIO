@@ -5,7 +5,7 @@ var offers = express.Router();
 var OffersModel    = require('../../mongo/db/mongoose').OffersModel;
 var log = require('../logs_lib/logs_lib')(module);
 
-offers.get('/offers', passport.authenticate('bearer', { session: false }), function(req, res) {
+offers.get('/offers', function(req, res) {
     return OffersModel.find(function (err, articles) {
         if (!err) {
             return res.send(articles);

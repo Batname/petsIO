@@ -1,1 +1,14 @@
-div HOME
+.jumbotron
+.container
+    .panel.panel-default
+        .panel-heading
+            | {{headingTitle}}
+            .pull-right
+                input.search(type='text', ng-model='query.name', placeholder='Search...')
+        .panel-body
+            .row.show-list
+                .fade-repeat.col-xs-4.col-md-3(ng-repeat='offer in offers | filter:query ')
+                    a(href='/offers/{{offer._id}}')
+                    .text-center
+                        a(href='/offers/{{offer._id}}') {{offer.name}}
+

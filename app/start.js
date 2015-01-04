@@ -26,10 +26,12 @@ var offers = require('./api/offers');
 var login = require('./api/login');
 var signup = require('./api/signup');
 var userInfo = require('./api/userInfo');
+var users = require('./api/users');
 app.use('/api', offers);
 app.use('/api', login);
 app.use('/api', signup);
 app.use('/api', userInfo);
+app.use('/api', users);
 
 
 require('../mongo/db/auth');

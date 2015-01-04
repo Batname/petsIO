@@ -1,1 +1,1 @@
-<div>HOME</div>
+<div class="jumbotron"></div><div class="container"><div class="panel panel-default"><div class="panel-heading">{{headingTitle}}<div class="pull-right"><input type="text" ng-model="query.name" placeholder="Search..." class="search"/></div></div><div class="panel-body"><div class="row show-list"><div ng-repeat="offer in offers | filter:query " class="fade-repeat col-xs-4 col-md-3"><a href="/offers/{{offer._id}}"></a><div class="text-center"><a href="/offers/{{offer._id}}">{{offer.name}}</a></div></div></div></div></div></div>
