@@ -1,0 +1,29 @@
+angular.module("petsIO", [
+  "ngResource"
+  "ngMessages"
+  "ngRoute"
+  "ngAnimate"
+  "mgcrea.ngStrap"
+]).config(($routeProvider, $locationProvider) ->
+  $locationProvider.html5Mode true
+  $routeProvider
+   .when("/login",
+    templateUrl: "views/login.html"
+    controller: 'LoginCtrl'
+  ).when("/signup",
+    templateUrl: "views/signup.html"
+    controller: 'SignupCtrl'
+  ).when("/userinfo",
+    templateUrl: "views/userinfo.html"
+    controller: 'UserinfoCtrl'
+  ).otherwise redirectTo: "/"
+).config ($httpProvider) ->
+  $httpProvider.interceptors.push ($rootScope, $q, $window, $location) ->
+    request: (config) ->
+      config.headers.Authorization = $window.localStorage.token  if $window.localStorage.token
+      config
+
+    responseError: (response) ->
+      $location.path "/login"  if response.status is 401 or response.status is 403
+      $q.reject response
+
