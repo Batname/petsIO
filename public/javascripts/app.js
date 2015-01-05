@@ -166,10 +166,17 @@
 }).call(this);
 
 (function() {
-  angular.module("petsIO").factory("Auth", function($http, $location, $rootScope, $alert, $window) {
-    var token;
+  angular.module("petsIO").factory("Auth", function($http, $location, $rootScope, $alert, $window, userInfofactory) {
+    var getCurrentUserInfo, token;
     token = $window.localStorage.token;
-    $rootScope.currentUser = token;
+    getCurrentUserInfo = function() {
+      return userInfofactory.get(function(info) {
+        return $rootScope.currentUser = info;
+      });
+    };
+    if (token) {
+      getCurrentUserInfo();
+    }
     return {
       login: function(user) {
         return $http({
@@ -181,7 +188,7 @@
           }
         }).success(function(data) {
           $window.localStorage.token = data.token_type + " " + data.access_token;
-          $rootScope.currentUser = token;
+          getCurrentUserInfo();
           $location.path("/");
           return $alert({
             title: "Cheers!",
