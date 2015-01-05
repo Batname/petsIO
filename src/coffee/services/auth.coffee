@@ -1,9 +1,12 @@
-angular.module("petsIO").factory "Auth", ($http, $location, $rootScope, $alert, $window) ->
+angular.module("petsIO").factory "Auth", ($http, $location, $rootScope, $alert, $window, userInfofactory) ->
   token = $window.localStorage.token
-  $rootScope.currentUser = token
-#  if token
-#     $rootScope.currentUser = token
+  getCurrentUserInfo = () ->
+    userInfofactory.get (info) ->
+      $rootScope.currentUser = info
+#      console.log $rootScope.currentUser
 
+  if token
+    getCurrentUserInfo()
 
   login: (user) ->
     $http({
@@ -13,7 +16,7 @@ angular.module("petsIO").factory "Auth", ($http, $location, $rootScope, $alert, 
       headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     }).success((data) ->
       $window.localStorage.token = data.token_type + " " + data.access_token
-      $rootScope.currentUser = token
+      getCurrentUserInfo()
       $location.path "/"
       $alert
         title: "Cheers!"
