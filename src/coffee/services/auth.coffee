@@ -15,7 +15,7 @@ angular.module("petsIO").factory "Auth", ($http, $location, $rootScope, $alert, 
     }).success((data) ->
       $window.localStorage.token = data.token_type + " " + data.access_token
       getCurrentUserInfo()
-      $location.path "/"
+      $location.path "/userinfo"
       if user.new_user
         $alert
           title: 'Congratulations!',

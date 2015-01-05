@@ -33,6 +33,9 @@ var User = new Schema({
         unique: true,
         required: true
     },
+    description: {
+        type: String
+    },
     hashedPassword: {
         type: String,
         required: true
