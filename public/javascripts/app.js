@@ -74,6 +74,10 @@
   angular.module("petsIO").controller("SignupCtrl", function($scope, Auth) {
     $scope.signup = function() {
       return Auth.signup({
+        new_user: true,
+        grant_type: 'password',
+        client_id: 'angular',
+        client_secret: '21091091',
         username: $scope.username,
         nickname: $scope.nickname,
         password: $scope.password
@@ -167,7 +171,7 @@
 
 (function() {
   angular.module("petsIO").factory("Auth", function($http, $location, $rootScope, $alert, $window, userInfofactory) {
-    var getCurrentUserInfo, token;
+    var getCurrentUserInfo, loginMethod, signupMethod, token;
     token = $window.localStorage.token;
     getCurrentUserInfo = function() {
       return userInfofactory.get(function(info) {
@@ -177,40 +181,19 @@
     if (token) {
       getCurrentUserInfo();
     }
-    return {
-      login: function(user) {
-        return $http({
-          method: 'POST',
-          url: "/api/login",
-          data: $.param(user),
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        }).success(function(data) {
-          $window.localStorage.token = data.token_type + " " + data.access_token;
-          getCurrentUserInfo();
-          $location.path("/");
-          return $alert({
-            title: "Cheers!",
-            content: "You have successfully logged in.",
-            animation: "fadeZoomFadeDown",
-            type: "material",
-            duration: 3
-          });
-        }).error(function() {
-          delete $window.localStorage.token;
-          return $alert({
-            title: 'Error!',
-            content: 'Invalid username or password.',
-            animation: 'fadeZoomFadeDown',
-            type: 'material',
-            duration: 3
-          });
-        });
-      },
-      signup: function(user) {
-        return $http.post("/api/signup", user).success(function(data) {
-          $location.path("/login");
+    loginMethod = function(user) {
+      return $http({
+        method: 'POST',
+        url: "/api/login",
+        data: $.param(user),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      }).success(function(data) {
+        $window.localStorage.token = data.token_type + " " + data.access_token;
+        getCurrentUserInfo();
+        $location.path("/");
+        if (user.new_user) {
           return $alert({
             title: 'Congratulations!',
             content: 'Your account has been created.',
@@ -218,16 +201,47 @@
             type: 'material',
             duration: 3
           });
-        }).error(function(response) {
-          $alert({
-            title: 'Error!',
-            content: response.data,
-            animation: 'fadeZoomFadeDown',
-            type: 'material',
+        } else {
+          return $alert({
+            title: "Cheers!",
+            content: "You have successfully logged in.",
+            animation: "fadeZoomFadeDown",
+            type: "material",
             duration: 3
           });
-          return console.log(response.message);
+        }
+      }).error(function() {
+        delete $window.localStorage.token;
+        return $alert({
+          title: 'Error!',
+          content: 'Invalid username or password.',
+          animation: 'fadeZoomFadeDown',
+          type: 'material',
+          duration: 3
         });
+      });
+    };
+    signupMethod = function(user) {
+      return $http.post("/api/signup", user).success(function(data) {
+        if (user.new_user) {
+          return loginMethod(user);
+        }
+      }).error(function(response) {
+        return $alert({
+          title: 'Error!',
+          content: response.data,
+          animation: 'fadeZoomFadeDown',
+          type: 'material',
+          duration: 3
+        });
+      });
+    };
+    return {
+      login: function(user) {
+        return loginMethod(user);
+      },
+      signup: function(user) {
+        return signupMethod(user);
       },
       logout: function() {
         delete $window.localStorage.token;
