@@ -170,6 +170,32 @@
 }).call(this);
 
 (function() {
+  angular.module("petsIO").directive("uniquenickname", function($http) {
+    return {
+      restrict: "A",
+      require: "ngModel",
+      link: function(scope, element, attrs, ngModel) {
+        element.bind("blur", function() {
+          if (ngModel.$modelValue) {
+            return $http.get("/api/users", {
+              params: {
+                nickname: ngModel.$modelValue
+              }
+            }).success(function(data) {
+              return ngModel.$setValidity("uniquenickname", data.available);
+            });
+          }
+        });
+        return element.bind("keyup", function() {
+          return ngModel.$setValidity("uniquenickname", true);
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
   angular.module("petsIO").factory("Auth", function($http, $location, $rootScope, $alert, $window, userInfofactory) {
     var getCurrentUserInfo, loginMethod, signupMethod, token;
     token = $window.localStorage.token;
