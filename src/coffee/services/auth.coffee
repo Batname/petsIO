@@ -3,12 +3,10 @@ angular.module("petsIO").factory "Auth", ($http, $location, $rootScope, $alert, 
   getCurrentUserInfo = () ->
     userInfofactory.get (info) ->
       $rootScope.currentUser = info
-#      console.log $rootScope.currentUser
-
   if token
     getCurrentUserInfo()
 
-  login: (user) ->
+  loginMethod = (user) ->
     $http({
       method: 'POST',
       url: "/api/login",
@@ -18,12 +16,21 @@ angular.module("petsIO").factory "Auth", ($http, $location, $rootScope, $alert, 
       $window.localStorage.token = data.token_type + " " + data.access_token
       getCurrentUserInfo()
       $location.path "/"
-      $alert
-        title: "Cheers!"
-        content: "You have successfully logged in."
-        animation: "fadeZoomFadeDown"
-        type: "material"
-        duration: 3
+      if user.new_user
+        $alert
+          title: 'Congratulations!',
+          content: 'Your account has been created.',
+          animation: 'fadeZoomFadeDown',
+          type: 'material',
+          duration: 3
+      else
+        $alert
+          title: "Cheers!"
+          content: "You have successfully logged in."
+          animation: "fadeZoomFadeDown"
+          type: "material"
+          duration: 3
+
     ).error ->
       delete $window.localStorage.token
       $alert
@@ -32,15 +39,12 @@ angular.module("petsIO").factory "Auth", ($http, $location, $rootScope, $alert, 
         animation: 'fadeZoomFadeDown',
         type: 'material',
         duration: 3
-  signup: (user) ->
+
+  signupMethod = (user) ->
     $http.post("/api/signup", user).success((data) ->
-      $location.path "/login"
-      $alert
-        title: 'Congratulations!',
-        content: 'Your account has been created.',
-        animation: 'fadeZoomFadeDown',
-        type: 'material',
-        duration: 3
+      if user.new_user
+        #$location.path "/login"
+        loginMethod(user)
     ).error (response) ->
       $alert
         title: 'Error!',
@@ -48,7 +52,13 @@ angular.module("petsIO").factory "Auth", ($http, $location, $rootScope, $alert, 
         animation: 'fadeZoomFadeDown',
         type: 'material',
         duration: 3
-      console.log (response.message)
+
+  login: (user) ->
+    loginMethod(user)
+
+  signup: (user) ->
+    signupMethod(user)
+
   logout: ->
     delete $window.localStorage.token
     $rootScope.currentUser = null
