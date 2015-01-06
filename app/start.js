@@ -4,8 +4,8 @@ var favicon = require('serve-favicon');
 var passport = require('passport');
 var bodyParser = require('body-parser');
 
-var config          = require('../mongo/db/config');
-var oauth2          = require('../mongo/db/oauth2');
+var config = require('../mongo/db/config');
+var oauth2 = require('../mongo/db/oauth2');
 var log = require('./logs_lib/logs_lib')(module);
 
 var async = require('async');
@@ -15,7 +15,6 @@ var xml2js = require('xml2js');
 
 var app = express();
 app.use('/bower_components',  express.static(path.join(__dirname, "../bower_components")));
-//app.use(favicon('../public/favicon.ico'));
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(passport.initialize());

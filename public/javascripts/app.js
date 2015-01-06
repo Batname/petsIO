@@ -89,13 +89,30 @@
 }).call(this);
 
 (function() {
-  angular.module("petsIO").controller("UserinfoCtrl", function($scope, $rootScope, $routeParams, userInfofactory, $window) {
-    return userInfofactory.get(function(info) {
+  angular.module("petsIO").controller("UserinfoCtrl", function($scope, $rootScope, $routeParams, userInfofactory, userFactory, $window) {
+    var token;
+    token = $window.localStorage.token;
+    userInfofactory.get(function(info) {
       $scope.info = info;
       if ($window.localStorage.token) {
         return $scope.info.token = $window.localStorage.token;
       }
     });
+    $scope.editUser = function() {
+      return userFactory.edit({
+        description: $scope.info.description,
+        user_id: $scope.info.user_id
+      });
+    };
+    return $scope.deleteUser = function() {
+      var deleteUser;
+      deleteUser = $window.confirm('Are you absolutely sure you want to delete?');
+      if (deleteUser) {
+        return userFactory["delete"]({
+          user_id: $scope.info.user_id
+        });
+      }
+    };
   });
 
 }).call(this);
@@ -218,7 +235,7 @@
       }).success(function(data) {
         $window.localStorage.token = data.token_type + " " + data.access_token;
         getCurrentUserInfo();
-        $location.path("/");
+        $location.path("/userinfo");
         if (user.new_user) {
           return $alert({
             title: 'Congratulations!',
@@ -293,7 +310,69 @@
 }).call(this);
 
 (function() {
-  angular.module("petsIO").factory("userInfofactory", function($resource) {
+  angular.module("petsIO").factory("userFactory", function($http, $location, $rootScope, $alert, $window) {
+    return {
+      edit: function(user) {
+        return $http({
+          method: 'PUT',
+          url: "/api/userInfo/" + user.user_id,
+          data: $.param(user),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).success(function(data) {
+          return $alert({
+            title: 'Edit!',
+            content: 'Your account has been edited.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
+        }).error(function() {
+          return $alert({
+            title: 'Error!',
+            content: 'Something hepened.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
+        });
+      },
+      "delete": function(user) {
+        return $http({
+          method: 'DELETE',
+          url: "/api/userInfo/" + user.user_id,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).success(function(data) {
+          delete $window.localStorage.token;
+          $rootScope.currentUser = null;
+          $location.path("/");
+          return $alert({
+            title: 'Goodbay!',
+            content: 'Your account has been deleted.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
+        }).error(function() {
+          return $alert({
+            title: 'Error!',
+            content: 'Something hepened.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").factory("userInfofactory", function($http, $location, $rootScope, $alert, $window, $resource) {
     return $resource("api/userInfo");
   });
 
