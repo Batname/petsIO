@@ -1,5 +1,7 @@
-angular.module("petsIO").controller "UserinfoCtrl", ($scope, $rootScope, $routeParams, userInfofactory, userFactory, $window) ->
+angular.module("petsIO").controller "UserinfoCtrl", ($scope, $routeParams, userInfofactory, Offers, userFactory, $window, $location) ->
   token = $window.localStorage.token
+  if !token
+    $location.path "/login"
 
   userInfofactory.get (info) ->
     $scope.info = info
@@ -15,3 +17,6 @@ angular.module("petsIO").controller "UserinfoCtrl", ($scope, $rootScope, $routeP
     if deleteUser
       userFactory.delete
           user_id: $scope.info.user_id
+
+  Offers.getUser().success (data) ->
+    $scope.userOffers = data

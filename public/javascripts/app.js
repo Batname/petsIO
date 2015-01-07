@@ -13,6 +13,12 @@
     }).when("/userinfo", {
       templateUrl: "views/userinfo.html",
       controller: 'UserinfoCtrl'
+    }).when("/offers/:id", {
+      templateUrl: "views/offerdetails.html",
+      controller: 'OfferDetailCtrl'
+    }).when("/offerscreate", {
+      templateUrl: "views/offercreate.html",
+      controller: 'OfferCreateCtrl'
     }).otherwise({
       redirectTo: "/"
     });
@@ -38,6 +44,48 @@
 }).call(this);
 
 (function() {
+  angular.module("petsIO").controller("OfferCreateCtrl", function($scope, $window, Offers, $location) {
+    var token;
+    token = $window.localStorage.token;
+    if (!token) {
+      $location.path("/login");
+    }
+    return $scope.createOffer = function() {
+      return Offers.create({
+        name: $scope.userOffer.offer.name
+      });
+    };
+  });
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").controller("OfferDetailCtrl", function($scope, $window, Offers, $routeParams) {
+    var token;
+    token = $window.localStorage.token;
+    Offers.getUserOffer($routeParams.id).success(function(data) {
+      return $scope.userOffer = data;
+    });
+    $scope.editOffer = function() {
+      return Offers.edit({
+        name: $scope.userOffer.offer.name,
+        id: $routeParams.id
+      });
+    };
+    return $scope.deleteOffer = function() {
+      var deleteOffer;
+      deleteOffer = $window.confirm('Are you absolutely sure you want to delete?');
+      if (deleteOffer) {
+        return Offers["delete"]({
+          id: $routeParams.id
+        });
+      }
+    };
+  });
+
+}).call(this);
+
+(function() {
   angular.module("petsIO").controller("LoginCtrl", function($scope, Auth) {
     $scope.login = function() {
       return Auth.login({
@@ -56,7 +104,10 @@
 (function() {
   angular.module("petsIO").controller("MainCtrl", function($scope, Offers) {
     $scope.headingTitle = "Top 12 Offers";
-    return $scope.offers = Offers.query();
+    $scope.offers = [];
+    return Offers.getAll().success(function(data) {
+      return $scope.offers = data;
+    });
   });
 
 }).call(this);
@@ -89,9 +140,12 @@
 }).call(this);
 
 (function() {
-  angular.module("petsIO").controller("UserinfoCtrl", function($scope, $rootScope, $routeParams, userInfofactory, userFactory, $window) {
+  angular.module("petsIO").controller("UserinfoCtrl", function($scope, $routeParams, userInfofactory, Offers, userFactory, $window, $location) {
     var token;
     token = $window.localStorage.token;
+    if (!token) {
+      $location.path("/login");
+    }
     userInfofactory.get(function(info) {
       $scope.info = info;
       if ($window.localStorage.token) {
@@ -104,7 +158,7 @@
         user_id: $scope.info.user_id
       });
     };
-    return $scope.deleteUser = function() {
+    $scope.deleteUser = function() {
       var deleteUser;
       deleteUser = $window.confirm('Are you absolutely sure you want to delete?');
       if (deleteUser) {
@@ -113,6 +167,9 @@
         });
       }
     };
+    return Offers.getUser().success(function(data) {
+      return $scope.userOffers = data;
+    });
   });
 
 }).call(this);
@@ -303,8 +360,110 @@
 }).call(this);
 
 (function() {
-  angular.module("petsIO").factory("Offers", function($resource) {
-    return $resource("/api/offers");
+  angular.module("petsIO").factory("Offers", function($http, $alert, $location) {
+    return {
+      getAll: function() {
+        return $http({
+          url: "/api/offers",
+          method: "GET"
+        });
+      },
+      getUser: function() {
+        return $http({
+          url: "/api/user/offers",
+          method: "GET",
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        });
+      },
+      getUserOffer: function(id) {
+        return $http({
+          url: "/api/offers/" + id,
+          method: "GET"
+        });
+      },
+      edit: function(offer) {
+        return $http({
+          method: 'PUT',
+          url: "/api/offers/" + offer.id,
+          data: $.param(offer),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).success(function(data) {
+          $location.path("/userinfo");
+          return $alert({
+            title: 'Edit!',
+            content: 'Your offer has been edited.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
+        }).error(function() {
+          return $alert({
+            title: 'Error!',
+            content: 'Something hepened.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
+        });
+      },
+      "delete": function(offer) {
+        return $http({
+          method: 'DELETE',
+          url: "/api/offers/" + offer.id,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).success(function(data) {
+          $location.path("/userinfo");
+          return $alert({
+            title: 'Goodbay!',
+            content: 'Your offer has been deleted.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
+        }).error(function() {
+          return $alert({
+            title: 'Error!',
+            content: 'Something hepened.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
+        });
+      },
+      create: function(offer) {
+        return $http({
+          method: 'POST',
+          url: "/api/offers",
+          data: $.param(offer),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).success(function(data) {
+          $location.path("/userinfo");
+          return $alert({
+            title: 'Edit!',
+            content: 'Your offer has been created.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
+        }).error(function() {
+          return $alert({
+            title: 'Error!',
+            content: 'Something hepened.',
+            animation: 'fadeZoomFadeDown',
+            type: 'material',
+            duration: 3
+          });
+        });
+      }
+    };
   });
 
 }).call(this);

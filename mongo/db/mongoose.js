@@ -3,6 +3,7 @@ var log         = require('../../app/logs_lib/logs_lib')(module);
 var config      = require('./config');
 var bcrypt = require('bcryptjs');
 var crypto      = require('crypto');
+require('mongo-relation');
 
 mongoose.connect(config.get('mongoose:uri'));
 var db = mongoose.connection;
@@ -18,8 +19,8 @@ var Schema = mongoose.Schema;
 
 
 var Offers = new Schema({
-    name: { type: String, trim: true, required: true },
-    user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+    name: { type: String, trim: true},
+    user: mongoose.Schema.ObjectId
 });
 
 var User = new Schema({
@@ -48,8 +49,10 @@ var User = new Schema({
         type: Date,
         default: Date.now
     },
-    offers: [{type: mongoose.Schema.Types.ObjectId, ref: 'Offers'}]
+    offers: [mongoose.Schema.ObjectId]
 });
+
+
 
 User.methods.encryptPassword = function(password) {
     return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
@@ -75,6 +78,8 @@ User.methods.checkPassword = function(password) {
     return this.encryptPassword(password) === this.hashedPassword;
 };
 
+User.hasMany('Offers', {dependent: 'delete'});
+Offers.belongsTo('User', {through: 'user'});
 
 var UserModel = mongoose.model('User', User);
 var OffersModel = mongoose.model('Offers', Offers);

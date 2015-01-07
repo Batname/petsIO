@@ -1,0 +1,12 @@
+.container
+   .panel.panel-default
+      .panel-heading Create Offer
+      .panel-body
+         .col-xs-6.col-md-6
+            form.form(method='post', ng-submit='createOffer()', name='addForm')
+               .form-group(ng-class="{ 'has-error' : addForm.name.$invalid && addForm.name.$dirty }")
+                  label.control-label.user-form-label Name
+                  input.form-control(type='text', name='name', placeholder='name', ng-model='userOffer.offer.name', autofocus ,ng-disabled='')
+               .bs-example
+                  button.btn.btn-primary(type='submit', ng-disabled='addForm.$invalid') Create Offer
+         .col-xs-6.col-md-6 Create Offer
