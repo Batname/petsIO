@@ -19,6 +19,9 @@
     }).when("/offerscreate", {
       templateUrl: "views/offercreate.html",
       controller: 'OfferCreateCtrl'
+    }).when("/allusers", {
+      templateUrl: "views/allusers.html",
+      controller: "AllUsersCtrl"
     }).otherwise({
       redirectTo: "/"
     });
@@ -40,6 +43,20 @@
       };
     });
   });
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").controller("AllUsersCtrl", [
+    '$scope', 'AllUsersFactory', function($scope, AllUsersFactory) {
+      var allUsers, serverErrorHandler;
+      serverErrorHandler = function() {
+        return alert("There was a server error, please reload the page and try again.");
+      };
+      allUsers = new AllUsersFactory(serverErrorHandler);
+      return $scope.allusers = allUsers.all();
+    }
+  ]);
 
 }).call(this);
 
@@ -103,10 +120,29 @@
 
 (function() {
   angular.module("petsIO").controller("MainCtrl", function($scope, Offers) {
-    $scope.headingTitle = "Top 12 Offers";
+    var cats, dogs;
+    dogs = ["Labrador Retriever", "German Shepherd Dog", "Beagle", "Golden Retriever", "Yorkshire Terrier", "Bulldog", "Boxer", "Poodle", "Dachshund", "Rottweiler", "Shih Tzu", "Miniature Schnauzer", "Doberman Pinscher", "Chihuahua", "German Shorthaired Pointer", "Siberian Husky", "Pomeranian", "French Bulldog", "Great Dane", "Shetland Sheepdog", "Cavalier King Charles Spaniel", "Boston Terrier", "Maltese Dog", "Australian Shepherd", "Pembroke Welsh Corgi", "Pug", "Cocker Spaniel", "English Mastiff", "English Springer Spaniel", "French Brittany"];
+    cats = ["Abyssinian", "Aegean", "American Bobtail", "American Curl", "American Shorthair", "American Wirehair", "Arabian Mau", "Asian", "Asian Semi-longhair", "Australian Mist", "Balinese", "Bambino", "Bengal", "Birman", "Bombay", "Brazilian Shorthair", "British Longhair", "British Semi-longhair", "British Shorthair", "Burmese", "Burmilla", "California Spangled", "Chantilly-Tiffany", "Chartreux", "Chausie", "Cheetoh", "Colorpoint Shorthair", "Cornish Rex", "Cyprus", "Devon Rex", "Dragon Li", "Egyptian Mau", "European Shorthair", "Exotic ShortHair", "German Rex", "Havana Brown", "Highlander", "Japanese Bobtail", "Javanese", "Khao Manee", "Korat", "Korean Bobtail", "Korn Ja", "Kurilian Bobtail", "LaPerm", "Lykoi", "Maine Coon", "Manx", "Mekong Bobtail", "Minskin", "Munchkin", "Napoleon", "Nebelung", "Norwegian Forest Cat", "Ocicat", "Ojos Azules", "Oregon Rex", "Oriental Bicolor", "Oriental Longhair", "Oriental Shorthair", "Persian (Modern Persian Cat)", "Persian (Traditional Persian Cat)", "Peterbald", "Pixie-bob", "Raas", "Ragamuffin", "Ragdoll", "Russian Blue", "Russian White, Black and Tabby", "Sam Sawet", "Savannah", "Scottish Fold", "Selkirk Rex", "Serengeti", "Serrade petit", "Siamese", "Siberian", "Singapura", "Snowshoe", "Sokoke", "Somali", "Sphynx", "Thai", "Tonkinese", "Toyger", "Turkish Angora", "Turkish Van", "Ukrainian Levkoy", "York Chocolate"];
+    $scope.alphabet = ['0-9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
     $scope.offers = [];
-    return Offers.getAll().success(function(data) {
+    Offers.getAll().success(function(data) {
       return $scope.offers = data;
+    });
+    $scope.titles = [
+      {
+        name: "Pets for sale"
+      }, {
+        name: "Pets for sex"
+      }
+    ];
+    $scope.myTitle = $scope.titles[0];
+    return $scope.$watch("myTitle", function(val) {
+      if (val.name === "Pets for sale") {
+        $scope.genres = dogs;
+      }
+      if (val.name === "Pets for sex") {
+        return $scope.genres = cats;
+      }
     });
   });
 
@@ -266,6 +302,34 @@
       }
     };
   });
+
+}).call(this);
+
+(function() {
+  angular.module('petsIO').factory('AllUsersFactory', [
+    '$resource', '$http', function($resource, $http) {
+      var AllUsersFactory;
+      return AllUsersFactory = (function() {
+        function AllUsersFactory(errorHandler) {
+          this.users = $resource('/api/allusers', {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          });
+          this.errorHandler = errorHandler;
+        }
+
+        AllUsersFactory.prototype.all = function() {
+          return this.users.query((function() {
+            return null;
+          }), this.errorHandler);
+        };
+
+        return AllUsersFactory;
+
+      })();
+    }
+  ]);
 
 }).call(this);
 

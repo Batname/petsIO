@@ -1,14 +1,24 @@
 .jumbotron
+    .container
+        ul.alphabet
+            li(ng-repeat='char in alphabet')
+                span(ng-click='filterByAlphabet(char)') {{char}}
+        ul.genres
+            li(ng-repeat='genre in genres')
+                span(ng-click='filterByGenre(genre)') {{genre}}
 .container
-    .panel.panel-default
-        .panel-heading
-            | {{headingTitle}}
-            .pull-right
-                input.search(type='text', ng-model='query.name', placeholder='Search...')
+    .panel.panel-default.home-panel
+        .panel-heading.clearfix
+            .col-xs-4.col-md-4
+                select.form-control(ng-model="myTitle" ng-options="title.name for title in titles")
+            .col-md-4.col-md-offset-4
+                .pull-right
+                    input.search(type='text', ng-model='query.name', placeholder='Search...')
         .panel-body
             .row.show-list
                 .fade-repeat.col-xs-4.col-md-3(ng-repeat='offer in offers | filter:query ')
                     a(href='/offers/{{offer._id}}')
                     .text-center
                         a(href='/offers/{{offer._id}}') {{offer.name}}
+
 
