@@ -5,8 +5,6 @@
          .col-xs-6.col-md-6
             form.form(method='post', ng-submit='editOffer()', name='addForm')
                .form-group(ng-class="{ 'has-error' : addForm.name.$invalid && addForm.name.$dirty }")
-                  label.control-label Id
-                  input.form-control(type='text', name='_id', placeholder='ID', ng-value='userOffer.offer._id', autofocus, ng-disabled='true')
                   label.control-label.user-form-label User
                   input.form-control(type='text', name='user', placeholder='user', ng-value='userOffer.offer.user', autofocus, ng-disabled='true')
                   label.control-label.user-form-label Name

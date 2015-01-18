@@ -1,14 +1,10 @@
 .container
     .panel.panel-default
-        .panel-heading Add TV Show
+        .panel-heading Customer panel
         .panel-body
             .col-xs-4.col-md-4
                 form.form(method='post', ng-submit='editUser()', name='addForm')
                     .form-group(ng-class="{ 'has-error' : addForm.showName.$invalid && addForm.showName.$dirty }")
-                        label.control-label Token
-                        input.form-control(type='text', name='token', placeholder='Enter TV show name', ng-value='info.token', autofocus, ng-disabled='true')
-                        label.control-label.user-form-label Id
-                        input.form-control(type='text', name='user_id', placeholder='Enter TV show name', ng-value='info.user_id', autofocus, ng-disabled='true')
                         label.control-label.user-form-label Email
                         input.form-control(type='text', name='email', placeholder='Enter nickname', ng-model='info.email', autofocus, required ,ng-disabled='true')
                         label.control-label.user-form-label Nickname
@@ -20,7 +16,6 @@
                 button.btn.btn-danger(type='submit', ng-click='deleteUser()') Delete Account
             .col-xs-4.col-md-4 Offers
                 .episode(ng-repeat='offer in userOffers')
-                    h4 {{offer._id}}
                     p {{offer.name}}
                     a(href='/offers/{{offer._id}}') Edit
                 a(href='/offerscreate') Create Offer

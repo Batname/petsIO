@@ -3,7 +3,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var passport = require('passport');
 var bodyParser = require('body-parser');
-
+var _ = require('lodash');
 var config = require('../mongo/db/config');
 var oauth2 = require('../mongo/db/oauth2');
 var log = require('./logs_lib/logs_lib')(module);
@@ -11,7 +11,6 @@ var log = require('./logs_lib/logs_lib')(module);
 var async = require('async');
 var request = require('request');
 var xml2js = require('xml2js');
-
 
 var app = express();
 app.use('/bower_components',  express.static(path.join(__dirname, "../bower_components")));
@@ -26,11 +25,13 @@ var login = require('./api/login');
 var signup = require('./api/signup');
 var userInfo = require('./api/userInfo');
 var users = require('./api/users');
+var publicUser= require('./api/public/user');
 app.use('/api', offers);
 app.use('/api', login);
 app.use('/api', signup);
 app.use('/api', userInfo);
 app.use('/api', users);
+app.use('/api/public', publicUser);
 
 
 require('../mongo/db/auth');

@@ -1,5 +1,5 @@
 var express = require('express');
-var passport = require('passport')
+var passport = require('passport');
 var users = express.Router();
 
 var UserModel = require('../../mongo/db/mongoose').UserModel;

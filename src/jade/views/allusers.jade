@@ -5,8 +5,10 @@
                     input.search(type='text', ng-model='query.username', placeholder='Search...')
         .panel-body
             .row.show-list
-                .fade-repeat.col-xs-4.col-md-3(ng-repeat='user in allusers | filter:query ')
-                    .text-center
-                        a(href='/allusers/{{user._id}}' ng-bind="user.username")
+                .fade-repeat(ng-repeat='user in allusers | filter:query ')
+                    ul
+                        li
+                            a(href='/public/user/{{user._id}}' ng-bind="user.username")
                         ul(ng-repeat='offer in user.offers') 
-                            li(ng-bind="offer")
+                            li(ng-show="$last")
+                                a(href='/public/offer/{{offer}}') Last Offer

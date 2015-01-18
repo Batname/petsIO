@@ -1,5 +1,5 @@
 (function() {
-  angular.module("petsIO", ["ngResource", "ngMessages", "ngRoute", "ngAnimate", "mgcrea.ngStrap"]).config(function($routeProvider, $locationProvider) {
+  angular.module("petsIO", ["ngResource", "ngMessages", "ngRoute", "ngAnimate", "mgcrea.ngStrap", "pasvaz.bindonce"]).config(function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
     return $routeProvider.when("/", {
       templateUrl: "views/home.html",
@@ -22,6 +22,12 @@
     }).when("/allusers", {
       templateUrl: "views/allusers.html",
       controller: "AllUsersCtrl"
+    }).when("/public/offer/:id", {
+      templateUrl: "views/public/offer.html",
+      controller: "PublicOfferCtrl"
+    }).when("/public/user/:id", {
+      templateUrl: "views/public/user.html",
+      controller: "PublicUserCtrl"
     }).otherwise({
       redirectTo: "/"
     });
@@ -77,9 +83,12 @@
 }).call(this);
 
 (function() {
-  angular.module("petsIO").controller("OfferDetailCtrl", function($scope, $window, Offers, $routeParams) {
+  angular.module("petsIO").controller("OfferDetailCtrl", function($scope, $window, Offers, $routeParams, $location) {
     var token;
     token = $window.localStorage.token;
+    if (!token) {
+      $location.path("/login");
+    }
     Offers.getUserOffer($routeParams.id).success(function(data) {
       return $scope.userOffer = data;
     });
@@ -99,6 +108,31 @@
       }
     };
   });
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").controller("PublicOfferCtrl", [
+    "$scope", "PublicOffersFactory", "$window", "$routeParams", function($scope, PublicOffersFactory, $window, $routeParams) {
+      return $scope.singleOffer = PublicOffersFactory.get({
+        ID: $routeParams.id
+      });
+    }
+  ]);
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").controller("PublicUserCtrl", [
+    "$scope", "$routeParams", "PublicUserFactory", function($scope, $routeParams, PublicUserFactory) {
+      PublicUserFactory.getUser($routeParams.id).success(function(data) {
+        return $scope.userData = data;
+      });
+      return PublicUserFactory.getUserOffers($routeParams.id).success(function(data) {
+        return $scope.userOffersData = data;
+      });
+    }
+  ]);
 
 }).call(this);
 
@@ -328,6 +362,39 @@
         return AllUsersFactory;
 
       })();
+    }
+  ]);
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").factory("PublicOffersFactory", [
+    '$resource', function($resource) {
+      return $resource('/api/offers/:ID', {
+        ID: '@id'
+      });
+    }
+  ]);
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").factory("PublicUserFactory", [
+    "$http", function($http) {
+      return {
+        getUser: function(id) {
+          return $http({
+            url: "/api/public/user/" + id,
+            method: "GET"
+          });
+        },
+        getUserOffers: function(id) {
+          return $http({
+            url: "/api/public/user/offers/" + id,
+            method: "GET"
+          });
+        }
+      };
     }
   ]);
 

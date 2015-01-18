@@ -1,0 +1,13 @@
+.container
+    .panel.panel-default
+        .panel-heading User Information
+        .panel-body
+            .col-xs-4.col-md-4 User:
+                p(ng-bind="userData.nickname")
+                p(ng-bind="userData.email")
+                p(ng-bind="userData.description")                                  
+            .col-xs-4.col-md-4 Offers:
+              ul
+                  li(ng-repeat='offer in userOffersData')
+                      a(ng-href="/public/offer/{{offer._id}}" ng-bind="offer.name")
+            .col-xs-4.col-md-4 Interest
