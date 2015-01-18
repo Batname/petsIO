@@ -3490,6 +3490,14 @@ Copyright (c) 2014 Daniel Eden
   animation-name: zoomOutUp;
 }
 
+body {
+  font-family: 'Open Sans',sans-serif;
+  font-size: 14px;
+  line-height: 1.42857;
+  color: #333;
+  background-color: #e4e7ec;
+}
+
 // MY CUSTOM STYLES
 
 .user-form-label {
@@ -3499,4 +3507,32 @@ Copyright (c) 2014 Daniel Eden
 .bs-example>.btn {
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.jumbotron {
+  padding-top: 25.6px;
+  padding-bottom: 25.6px;
+}
+
+.label-default, .genres li {
+  background-color: #e4e7ec;
+  text-shadow: 0 1px 0 rgba(255,255,255,.7);
+  color: #90939a;
+}
+
+.label, .genres li {
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  font-size: 13px;
+}
+
+.ads-block {
+  min-height: 50px;
+  text-align: center;
+}
+.home-panel {
+  min-height: 500px;
 }

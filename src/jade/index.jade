@@ -4,11 +4,11 @@ html(lang="en" ng-app="petsIO")
       base(href="/")
       meta(charset="utf-8")
       title petsIO
-      link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
-      link(rel='stylesheet', href='/stylesheets/style.css')
       link(href='favicon.png', rel='icon', type='image/png')
       link(href='http://fonts.googleapis.com/css?family=Roboto|Montserrat:400,700|Open+Sans:400,300,700', rel='stylesheet', type='text/css')
       link(href='//cdn.jsdelivr.net/ionicons/1.4.1/css/ionicons.min.css', rel='stylesheet')
+      link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
+      link(rel='stylesheet', href='/stylesheets/style.css')
       script(src="/bower_components/jquery/dist/jquery.js")
       script(src="/bower_components/angular/angular.js")
       script(src="/bower_components/angular-animate/angular-animate.js")
@@ -30,7 +30,9 @@ html(lang="en" ng-app="petsIO")
             li(data-match-route='/$')
                a(href='/') Home
             li(data-match-route='/userinfo' ng-if='currentUser')
-               a(href='/userinfo') Userinfo
+               a(href='/userinfo') My account
+            li(data-match-route='/allusers')
+               a(href='/allusers') All Users              
          ul.nav.navbar-nav.pull-right(ng-if='!currentUser')
             li(data-match-route='/login')
                a(href='/login') Login
@@ -41,3 +43,9 @@ html(lang="en" ng-app="petsIO")
             li
                a(href='javascript:void(0)', ng-click='logout()') Logout
       div(class='{{pageClass}}' ng-view)
+      .container
+         .panel.panel-default
+            .panel-body
+               .ads-block
+                  div ADVERTISING
+

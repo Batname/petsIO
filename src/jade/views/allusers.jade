@@ -1,0 +1,12 @@
+.container
+    .panel.panel-default.home-panel
+        .panel-heading.clearfix
+                .pull-right
+                    input.search(type='text', ng-model='query.username', placeholder='Search...')
+        .panel-body
+            .row.show-list
+                .fade-repeat.col-xs-4.col-md-3(ng-repeat='user in allusers | filter:query ')
+                    .text-center
+                        a(href='/allusers/{{user._id}}' ng-bind="user.username")
+                        ul(ng-repeat='offer in user.offers') 
+                            li(ng-bind="offer")

@@ -25,6 +25,9 @@ angular.module("petsIO", [
   ).when("/offerscreate",
     templateUrl: "views/offercreate.html"
     controller: 'OfferCreateCtrl'
+  ).when("/allusers",
+    templateUrl:"views/allusers.html"
+    controller: "AllUsersCtrl"
   ).otherwise redirectTo: "/"
 ).config ($httpProvider) ->
   $httpProvider.interceptors.push ($rootScope, $q, $window, $location) ->
