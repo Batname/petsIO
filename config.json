@@ -1,7 +1,7 @@
 {
   "port" : 3000,
   "security": {
-    "tokenLife" : 3600
+    "tokenLife" : 86400
   },
   "mongoose": {
     "uri": "mongodb://localhost/petsIO"

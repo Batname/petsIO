@@ -4,6 +4,7 @@ angular.module("petsIO", [
   "ngRoute"
   "ngAnimate"
   "mgcrea.ngStrap"
+  "pasvaz.bindonce"
 ]).config(($routeProvider, $locationProvider) ->
   $locationProvider.html5Mode true
   $routeProvider
@@ -28,7 +29,13 @@ angular.module("petsIO", [
   ).when("/allusers",
     templateUrl:"views/allusers.html"
     controller: "AllUsersCtrl"
-  ).otherwise redirectTo: "/"
+  ).when("/public/offer/:id",
+    templateUrl:"views/public/offer.html",
+    controller: "PublicOfferCtrl"  
+  ).when("/public/user/:id",
+    templateUrl: "views/public/user.html",
+    controller: "PublicUserCtrl"
+  ).otherwise redirectTo: "/"    
 ).config ($httpProvider) ->
   $httpProvider.interceptors.push ($rootScope, $q, $window, $location) ->
     request: (config) ->

@@ -32,7 +32,8 @@
     "request": "^2.34.0",
     "async": "^0.8.0",
     "jwt-simple": "^0.2.0",
-    "mongo-relation":"*"
+    "mongo-relation":"*",
+    "lodash":"*"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

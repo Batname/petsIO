@@ -1,5 +1,9 @@
-angular.module("petsIO").controller "OfferDetailCtrl", ($scope, $window, Offers, $routeParams) ->
+angular.module("petsIO").controller "OfferDetailCtrl", ($scope, $window, Offers, $routeParams, $location) ->
   token = $window.localStorage.token
+
+  if !token
+    $location.path "/login"  
+
 
   Offers.getUserOffer($routeParams.id).success (data) ->
     $scope.userOffer = data
