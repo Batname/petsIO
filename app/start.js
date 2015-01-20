@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 
 var offers = require('./api/offers');
-var interestforbuy = require('./api/interestforbuy');
+var interestforbuy = require('./api/interest/interestforbuy');
 var login = require('./api/login');
 var signup = require('./api/signup');
 var userInfo = require('./api/userInfo');
