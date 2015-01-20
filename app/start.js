@@ -21,12 +21,14 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 
 var offers = require('./api/offers');
+var interestforbuy = require('./api/interestforbuy');
 var login = require('./api/login');
 var signup = require('./api/signup');
 var userInfo = require('./api/userInfo');
 var users = require('./api/users');
 var publicUser= require('./api/public/user');
 app.use('/api', offers);
+app.use('/api', interestforbuy);
 app.use('/api', login);
 app.use('/api', signup);
 app.use('/api', userInfo);

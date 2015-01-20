@@ -17,7 +17,6 @@ db.once('open', function callback () {
 
 var Schema = mongoose.Schema;
 
-
 var Offers = new Schema({
     name: { type: String, trim: true},
     user: mongoose.Schema.ObjectId
