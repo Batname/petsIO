@@ -28,6 +28,9 @@
     }).when("/public/user/:id", {
       templateUrl: "views/public/user.html",
       controller: "PublicUserCtrl"
+    }).when("/chat", {
+      templateUrl: "views/websocket/chat.html",
+      controller: "WebSocketCtrl"
     }).otherwise({
       redirectTo: "/"
     });
@@ -131,6 +134,91 @@
       return PublicUserFactory.getUserOffers($routeParams.id).success(function(data) {
         return $scope.userOffersData = data;
       });
+    }
+  ]);
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").controller("WebSocketCtrl", [
+    "$scope", "WebSocketFactory", function($scope, WebSocketFactory) {
+      var changeName;
+      WebSocketFactory.on("init", function(data) {
+        $scope.name = data.name;
+        return $scope.users = data.users;
+      });
+      WebSocketFactory.on("send:message", function(message) {
+        return $scope.messages.push(message);
+      });
+      WebSocketFactory.on("change:name", function(data) {
+        return changeName(data.oldName, data.newName);
+      });
+      WebSocketFactory.on("user:join", function(data) {
+        $scope.messages.push({
+          user: "chatroom",
+          text: "User " + data.name + " has joined."
+        });
+        return $scope.users.push(data.name);
+      });
+      WebSocketFactory.on("user:left", function(data) {
+        var i, user, _results;
+        $scope.messages.push({
+          user: "chatroom",
+          text: "User " + data.name + " has left."
+        });
+        i = void 0;
+        user = void 0;
+        i = 0;
+        _results = [];
+        while (i < $scope.users.length) {
+          user = $scope.users[i];
+          if (user === data.name) {
+            $scope.users.splice(i, 1);
+            break;
+          }
+          _results.push(i++);
+        }
+        return _results;
+      });
+      changeName = function(oldName, newName) {
+        var i;
+        i = void 0;
+        i = 0;
+        while (i < $scope.users.length) {
+          if ($scope.users[i] === oldName) {
+            $scope.users[i] = newName;
+          }
+          i++;
+        }
+        return $scope.messages.push({
+          user: "chatroom",
+          text: "User " + oldName + " is now known as " + newName + "."
+        });
+      };
+      $scope.changeName = function() {
+        return WebSocketFactory.emit("change:name", {
+          name: $scope.newName
+        }, function(result) {
+          if (!result) {
+            return alert("There was an error changing your name");
+          } else {
+            changeName($scope.name, $scope.newName);
+            $scope.name = $scope.newName;
+            return $scope.newName = "";
+          }
+        });
+      };
+      $scope.messages = [];
+      return $scope.sendMessage = function() {
+        WebSocketFactory.emit("send:message", {
+          message: $scope.message
+        });
+        $scope.messages.push({
+          user: $scope.name,
+          text: $scope.message
+        });
+        return $scope.message = "";
+      };
     }
   ]);
 
@@ -245,6 +333,18 @@
 }).call(this);
 
 (function() {
+  "use strict";
+  angular.module("petsIO").directive("appVersion", [
+    "version", function(version) {
+      return function(scope, elm, attrs) {
+        return elm.text(version);
+      };
+    }
+  ]);
+
+}).call(this);
+
+(function() {
   angular.module("petsIO").directive("passwordStrength", function() {
     return {
       restrict: "A",
@@ -340,6 +440,18 @@
 }).call(this);
 
 (function() {
+  "use strict";
+  angular.module("petsIO").filter("interpolate", [
+    "version", function(version) {
+      return function(text) {
+        return String(text).replace(/\%VERSION\%/g, version);
+      };
+    }
+  ]);
+
+}).call(this);
+
+(function() {
   angular.module('petsIO').factory('AllUsersFactory', [
     '$resource', '$http', function($resource, $http) {
       var AllUsersFactory;
@@ -392,6 +504,38 @@
           return $http({
             url: "/api/public/user/offers/" + id,
             method: "GET"
+          });
+        }
+      };
+    }
+  ]);
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").factory("WebSocketFactory", [
+    "$rootScope", function($rootScope) {
+      var socket;
+      socket = io.connect();
+      return {
+        on: function(eventName, callback) {
+          return socket.on(eventName, function() {
+            var args;
+            args = arguments;
+            return $rootScope.$apply(function() {
+              return callback.apply(socket, args);
+            });
+          });
+        },
+        emit: function(eventName, data, callback) {
+          return socket.emit(eventName, data, function() {
+            var args;
+            args = arguments;
+            return $rootScope.$apply(function() {
+              if (callback) {
+                return callback.apply(socket, args);
+              }
+            });
           });
         }
       };

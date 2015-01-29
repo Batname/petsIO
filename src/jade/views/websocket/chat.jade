@@ -1,0 +1,37 @@
+.container
+	.panel.panel-default
+		.panel-heading Angular Socket.io IM Demo App
+		.panel-body
+			.row
+				.col-xs-8.col-md-8
+					h3 Messages
+					.overflowable
+						p(ng-repeat='message in messages',
+							class="{{message.user == 'chatroom' ? 'text-info' : ''}}",
+							) {{message.user}}: {{message.text}}
+
+				.col-xs-4.col-md-4
+					h3 Users
+					.overflowable
+						p(ng-repeat='user in users') {{user}}
+			.row			
+				.col-xs-8.col-md-8
+					form.form-inline(ng-submit='sendMessage()')
+						.form-group
+							label(for="messageInput") Message: 
+							input.form-control(size='60', 
+							 ng-model='message', 
+							 id="messageInput",
+							 placeholder="type your message"
+							 ) 
+						button.btn.btn-primary(type='submit') Send		
+
+				.col-xs-4.col-md-4
+					form.form-inline(ng-submit='changeName()')
+						.form-group
+							label(for="newNameInput") 
+							input.form-control(ng-model='newName', 
+								id="newNameInput", 
+								placeholder="Change name, Now you are {{name}}"
+								)
+						button.btn.btn-primary(type='submit') Send	
