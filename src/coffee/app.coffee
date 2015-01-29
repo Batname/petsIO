@@ -35,6 +35,9 @@ angular.module("petsIO", [
   ).when("/public/user/:id",
     templateUrl: "views/public/user.html",
     controller: "PublicUserCtrl"
+  ).when("/chat",
+    templateUrl: "views/websocket/chat.html",
+    controller: "WebSocketCtrl"    
   ).otherwise redirectTo: "/"    
 ).config ($httpProvider) ->
   $httpProvider.interceptors.push ($rootScope, $q, $window, $location) ->

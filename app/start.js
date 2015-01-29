@@ -8,6 +8,8 @@ var config = require('../mongo/db/config');
 var oauth2 = require('../mongo/db/oauth2');
 var log = require('./logs_lib/logs_lib')(module);
 
+
+
 var async = require('async');
 var request = require('request');
 var xml2js = require('xml2js');
@@ -36,11 +38,19 @@ app.use('/api', users);
 app.use('/api/public', publicUser);
 
 
+
 require('../mongo/db/auth');
 
-app.listen(3000, function(){
+app.server = app.listen(3000, function(){
     console.log('Express server listening on port 3000');
 });
+
+/**
+ * Web Socket init
+ */
+var io = require('socket.io').listen(app.server);
+var socket = require('./api/socket/chat');
+io.sockets.on('connection', socket);
 
 app.get('*', function(req, res) {
     res.redirect('/#' + req.originalUrl);

@@ -9,6 +9,7 @@ html(lang="en" ng-app="petsIO")
       link(href='//cdn.jsdelivr.net/ionicons/1.4.1/css/ionicons.min.css', rel='stylesheet')
       link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
       link(rel='stylesheet', href='/stylesheets/style.css')
+      script(src="/socket.io/socket.io.js")         
       script(src="/bower_components/jquery/dist/jquery.js")
       script(src="/bower_components/angular/angular.js")
       script(src="/bower_components/angular-animate/angular-animate.js")
@@ -34,7 +35,9 @@ html(lang="en" ng-app="petsIO")
             li(data-match-route='/userinfo' ng-if='currentUser')
                a(href='/userinfo') My account
             li(data-match-route='/allusers')
-               a(href='/allusers') All Users              
+               a(href='/allusers') All Users 
+            li(data-match-route='/chat')
+               a(href='/chat') Chat                            
          ul.nav.navbar-nav.pull-right(ng-if='!currentUser')
             li(data-match-route='/login')
                a(href='/login') Login
