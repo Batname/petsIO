@@ -31,6 +31,9 @@
     }).when("/chat", {
       templateUrl: "views/websocket/chat.html",
       controller: "WebSocketCtrl"
+    }).when("/websockets", {
+      templateUrl: "views/websocket/websockets.html",
+      controller: "WebSocketsCtrl"
     }).otherwise({
       redirectTo: "/"
     });
@@ -221,6 +224,11 @@
       };
     }
   ]);
+
+}).call(this);
+
+(function() {
+  angular.module("petsIO").controller("WebSocketsCtrl", ["$scope", function($scope) {}]);
 
 }).call(this);
 

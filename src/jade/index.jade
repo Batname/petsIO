@@ -37,7 +37,9 @@ html(lang="en" ng-app="petsIO")
             li(data-match-route='/allusers')
                a(href='/allusers') All Users 
             li(data-match-route='/chat')
-               a(href='/chat') Chat                            
+               a(href='/chat') Chat   
+            li(data-match-route='/websockets')
+               a(href='/websockets') WebSockets                                          
          ul.nav.navbar-nav.pull-right(ng-if='!currentUser')
             li(data-match-route='/login')
                a(href='/login') Login
