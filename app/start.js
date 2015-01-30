@@ -52,6 +52,12 @@ var io = require('socket.io').listen(app.server);
 var socket = require('./api/socket/chat');
 io.sockets.on('connection', socket);
 
+/**
+ * New web Socckets lib
+ */
+var ws = require('./config/ws')
+ws.listen(app.server);
+
 app.get('*', function(req, res) {
     res.redirect('/#' + req.originalUrl);
 });
